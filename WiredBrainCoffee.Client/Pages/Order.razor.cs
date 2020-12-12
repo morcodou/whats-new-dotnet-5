@@ -14,12 +14,15 @@ namespace WiredBrainCoffee.Client.Pages
     public partial class Order
     {
         [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
+        [Inject]
         public IMenuService MenuService { get; set; }
 
         [Inject]
         public NavigationManager NavManager { get; set; }
-        
-        [CascadingParameter] 
+
+        [CascadingParameter]
         public IModalService Modal { get; set; }
 
         public List<OrderItem> CurrentOrder { get; set; } = new List<OrderItem>();
@@ -78,7 +81,10 @@ namespace WiredBrainCoffee.Client.Pages
 
         public async Task PlaceOrder()
         {
-            NavManager.NavigateTo("order-confirmation");
+            var promoCodeModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/promocode.js");
+            IsValidPromoCode = await promoCodeModule.InvokeAsync<bool>("VerifyPromoCode", PromoCode);
+            if (IsValidPromoCode)
+                NavManager.NavigateTo("order-confirmation");
         }
 
         protected async override Task OnInitializedAsync()
