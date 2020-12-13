@@ -17,8 +17,16 @@
 </CascadingBlazoredModal>
 
 @code {
+    List<Assembly> lazyLoadedAssemblies = new List<Assembly>();
+
     private async Task OnNavigateAsync(NavigationContext context)
     {
-        
+        if (context.Path.Contains("Contact"))
+        {
+            var contactAssemblies = new List<string>() { "WiredBrainCoffee.Components.dll" };
+            var assemblies = await assemblyLoader.LoadAssembliesAsync(contactAssemblies);
+            lazyLoadedAssemblies.AddRange(assemblies);
+
+        }
     }
 }
