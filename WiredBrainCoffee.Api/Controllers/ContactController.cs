@@ -17,6 +17,11 @@ namespace WiredBrainCoffee.Api.Controllers
     public class ContactController : Controller
     {
         private readonly IWebHostEnvironment webHostEnvironment;
+        public record ContactRecord(string Name, 
+            string Phone, string Email, 
+            string Message, DateTime SubmittedTime,
+            List<FileRecord> AttachedFiles);
+        public record FileRecord(string FileName, byte[] FileContent);
 
         public ContactController(IWebHostEnvironment webHostEnvironment)
         {
@@ -24,12 +29,12 @@ namespace WiredBrainCoffee.Api.Controllers
         }
 
         [HttpPost()]
-        public void Post(Contact contact)
+        public void Post(ContactRecord contact)
         {
             // Todo: Save contact info to the database
 
             // Write uploaded files to images directory
-            foreach(var file in contact.AttachedFiles)
+            foreach (var file in contact.AttachedFiles)
             {
                 var path = $"{webHostEnvironment.ContentRootPath}\\images\\{file.FileName}";
                 var fs = System.IO.File.Create(path);
